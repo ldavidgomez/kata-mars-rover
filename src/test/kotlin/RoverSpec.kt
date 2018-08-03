@@ -87,8 +87,9 @@ class IncorrectPositionException : Exception()
 class IncorrectCommandException : Exception()
 
 enum class COMMANDS {
-    F, B, E, W
+    F, B, R, L
 }
+
 
 class Rover(private val x: Int, private val y: Int, private val direction: String) {
     fun move(commands: Array<String>): Pair<Int, Int> {
