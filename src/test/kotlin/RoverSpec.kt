@@ -97,7 +97,11 @@ class Rover(private val x: Int, private val y: Int, private val direction: Strin
     fun move(commands: Array<String>): Pair<Int, Int> {
         val moveMap = mapOf("N" to Pair(0,1), "S" to Pair(0, -1) )
 
-        val addedPosition = moveMap[direction]!!
+        val addedPosition = when(moveMap.containsKey(direction)) {
+            true -> moveMap[direction]!!
+            else -> throw IncorrectPositionException()
+        }
+
         if (commands.isEmpty()) {
             return Pair(x, y)
         }
