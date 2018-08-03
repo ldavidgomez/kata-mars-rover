@@ -60,7 +60,7 @@ class RoverSpek: Spek({
 
         on("wrong direction") {
 
-            it("should throw exception") {
+            it("should throw incorrect position exception") {
                 val command = emptyArray<String>()
                 assertFailsWith<IncorrectPositionException> {
                     val rover = Rover(0, 0, "wrong direction")
@@ -71,7 +71,7 @@ class RoverSpek: Spek({
 
         on("wrong command") {
 
-            it("should throw exception") {
+            it("should throw incorrect command exception") {
                 val command = arrayOf("wrong command")
                 assertFailsWith<IncorrectCommandException> {
                     val rover = Rover(0, 0, "N")
@@ -93,7 +93,7 @@ enum class COMMANDS {
 
 class Rover(private val x: Int, private val y: Int, private val direction: String) {
     fun move(commands: Array<String>): Pair<Int, Int> {
-        val validCommands = try { commands.map { COMMANDS.valueOf(it.toUpperCase()) } } catch (e: Exception) {throw IncorrectCommandException()}
+        val validCommands = validateCommands(commands)
 
         val moveMap = mapOf("N" to Pair(0,1), "S" to Pair(0, -1) )
 
@@ -109,6 +109,14 @@ class Rover(private val x: Int, private val y: Int, private val direction: Strin
             COMMANDS.F -> Pair(x + addedPosition.first, y + addedPosition.second)
             COMMANDS.B -> Pair(x + addedPosition.first, y - addedPosition.second)
             else -> throw Exception()
+        }
+    }
+
+    private fun validateCommands(commands: Array<String>): List<COMMANDS> {
+        return try {
+            commands.map { COMMANDS.valueOf(it.toUpperCase()) }
+        } catch (e: Exception) {
+            throw IncorrectCommandException()
         }
     }
 }
