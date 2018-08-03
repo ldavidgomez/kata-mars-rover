@@ -132,7 +132,7 @@ enum class COMMANDS {
 
 data class Position(private val x: Int, private val y: Int, private val direction: String)
 
-private val movement =
+private val movementMap =
         mapOf(
                 "N" to mapOf(
                         Pair(COMMANDS.F, Pair(0,1)),
@@ -157,7 +157,7 @@ class Rover(private val x: Int, private val y: Int, private val direction: Strin
         if (commands.isEmpty()) return Pair(x, y)
 
         val validCommands = try { validateCommands(commands) } catch (e: IncorrectCommandException) { throw e}
-        val validCardinalPosition = try { validatePosition(movement) } catch (e: IncorrectPositionException) { throw  e}
+        val validCardinalPosition = try { validatePosition(movementMap) } catch (e: IncorrectPositionException) { throw  e}
 
         return Pair(x + validCardinalPosition[validCommands[0]]!!.first, y + validCardinalPosition[validCommands[0]]!!.second)
     }
