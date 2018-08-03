@@ -209,10 +209,10 @@ enum class COMMANDS {
     F, B, R, L
 }
 
-private val N = "N"
-private val E = "E"
-private val S = "S"
-private val W = "W"
+private const val N = "N"
+private const val E = "E"
+private const val S = "S"
+private const val W = "W"
 
 private val CARDINAL_POINTS = mapOf(N to 0, E to 1, S to 2, W to 3)
 
