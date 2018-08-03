@@ -68,6 +68,26 @@ class RoverSpek: Spek({
             }
         }
 
+        on("forward command and West direction") {
+
+            it("should rover moves forwards") {
+                val command = arrayOf("f")
+                val rover = Rover(0, 0, "W")
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Pair(-1,0)
+            }
+        }
+
+        on("backward command and West direction") {
+
+            it("should rover moves forwards") {
+                val command = arrayOf("b")
+                val rover = Rover(0, 0, "W")
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Pair(1,0)
+            }
+        }
+
         on("empty array of commands") {
 
             it("should not move") {
@@ -131,6 +151,10 @@ class Rover(private val x: Int, private val y: Int, private val direction: Strin
                         "E" to mapOf(
                                 Pair(COMMANDS.F, Pair(1,0)),
                                 Pair(COMMANDS.B, Pair(-1,0))
+                        ),
+                        "W" to mapOf(
+                                Pair(COMMANDS.F, Pair(-1,0)),
+                                Pair(COMMANDS.B, Pair(1,0))
                         )
             )
 
