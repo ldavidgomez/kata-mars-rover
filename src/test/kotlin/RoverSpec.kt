@@ -146,19 +146,27 @@ private val movementMap =
         mapOf(
                 "N" to mapOf(
                         Pair(COMMANDS.F, Pair(0,1)),
-                        Pair(COMMANDS.B, Pair(0,-1))
+                        Pair(COMMANDS.B, Pair(0,-1)),
+                        Pair(COMMANDS.R, Pair(0,0)),
+                        Pair(COMMANDS.L, Pair(0,0))
                 ),
                 "S" to mapOf(
                         Pair(COMMANDS.F, Pair(0,-1)),
-                        Pair(COMMANDS.B, Pair(0,1))
+                        Pair(COMMANDS.B, Pair(0,1)),
+                        Pair(COMMANDS.R, Pair(0,0)),
+                        Pair(COMMANDS.L, Pair(0,0))
                 ),
                 "E" to mapOf(
                         Pair(COMMANDS.F, Pair(1,0)),
-                        Pair(COMMANDS.B, Pair(-1,0))
+                        Pair(COMMANDS.B, Pair(-1,0)),
+                        Pair(COMMANDS.R, Pair(0,0)),
+                        Pair(COMMANDS.L, Pair(0,0))
                 ),
                 "W" to mapOf(
                         Pair(COMMANDS.F, Pair(-1,0)),
-                        Pair(COMMANDS.B, Pair(1,0))
+                        Pair(COMMANDS.B, Pair(1,0)),
+                        Pair(COMMANDS.R, Pair(0,0)),
+                        Pair(COMMANDS.L, Pair(0,0))
                 )
         )
 
@@ -169,7 +177,26 @@ class Rover(private val position: Position) {
         val validCommands = try { validateCommands(commands) } catch (e: IncorrectCommandException) { throw e}
         val validCardinalPosition = try { validatePosition(movementMap) } catch (e: IncorrectPositionException) { throw  e}
 
-        return Position(position.x + validCardinalPosition[validCommands[0]]!!.first, position.y + validCardinalPosition[validCommands[0]]!!.second, position.direction)
+        val newDirection = calculateDirection(validCommands[0], position.direction)
+        return Position(position.x + validCardinalPosition[validCommands[0]]!!.first, position.y + validCardinalPosition[validCommands[0]]!!.second, newDirection)
+    }
+
+    private fun calculateDirection(commands: COMMANDS, direction: String): String {
+        return when(commands) {
+            COMMANDS.R -> when(direction) {
+                "N" -> "E"
+                "E" -> "S"
+                "S" -> "W"
+                else -> "N"
+            }
+            COMMANDS.L -> when(direction) {
+                "N" -> "W"
+                "W" -> "S"
+                "S" -> "E"
+                else -> "N"
+            }
+            else -> direction
+        }
     }
 
     private fun validatePosition(moveMap: Map<String, Map<COMMANDS, Pair<Int, Int>>>): Map<COMMANDS, Pair<Int, Int>> {
