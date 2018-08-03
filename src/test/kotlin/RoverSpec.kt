@@ -129,6 +129,16 @@ class RoverSpek: Spek({
                 roverPosition `should equal` Position(0,0, "E")
             }
         }
+
+        on("right command and East direction") {
+
+            it("should rover turn right and direction is South") {
+                val command = arrayOf("r")
+                val rover = Rover(Position(0, 0, "E"))
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Position(0,0, "S")
+            }
+        }
     }
 })
 
@@ -139,7 +149,12 @@ enum class COMMANDS {
     F, B, R, L
 }
 
-
+enum class CARDINAL_POSITION(val value: Int) {
+    N(1),
+    E(2),
+    S(3),
+    W(4)
+}
 
 data class Position(val x: Int, val y: Int, val direction: String)
 
