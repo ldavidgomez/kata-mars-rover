@@ -8,6 +8,38 @@ import kotlin.test.assertFailsWith
 class RoverSpek: Spek({
     describe("given a simple command ") {
 
+        on("empty array of commands") {
+
+            it("should not move") {
+                val command = emptyArray<String>()
+                val rover = Rover(Position(0, 0, "S"))
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Position(0,0, "S")
+            }
+        }
+
+        on("wrong direction") {
+
+            it("should throw incorrect position exception") {
+                val command = arrayOf("f")
+                assertFailsWith<IncorrectPositionException> {
+                    val rover = Rover(Position(0, 0, "wrong direction"))
+                    rover.move(command)
+                }
+            }
+        }
+
+        on("wrong command") {
+
+            it("should throw incorrect command exception") {
+                val command = arrayOf("wrong command")
+                assertFailsWith<IncorrectCommandException> {
+                    val rover = Rover(Position(0, 0, "N"))
+                    rover.move(command)
+                }
+            }
+        }
+
         on("forward command and North direction") {
 
             it("should rover moves forwards") {
@@ -97,39 +129,6 @@ class RoverSpek: Spek({
                 roverPosition `should equal` Position(0,0, "E")
             }
         }
-
-        on("empty array of commands") {
-
-            it("should not move") {
-                val command = emptyArray<String>()
-                val rover = Rover(Position(0, 0, "S"))
-                val roverPosition = rover.move(command)
-                roverPosition `should equal` Position(0,0, "S")
-            }
-        }
-
-        on("wrong direction") {
-
-            it("should throw incorrect position exception") {
-                val command = arrayOf("f")
-                assertFailsWith<IncorrectPositionException> {
-                    val rover = Rover(Position(0, 0, "wrong direction"))
-                    rover.move(command)
-                }
-            }
-        }
-
-        on("wrong command") {
-
-            it("should throw incorrect command exception") {
-                val command = arrayOf("wrong command")
-                assertFailsWith<IncorrectCommandException> {
-                    val rover = Rover(Position(0, 0, "N"))
-                    rover.move(command)
-                }
-            }
-        }
-
     }
 })
 
@@ -139,6 +138,8 @@ class IncorrectCommandException : Exception()
 enum class COMMANDS {
     F, B, R, L
 }
+
+
 
 data class Position(val x: Int, val y: Int, val direction: String)
 
