@@ -18,21 +18,21 @@ class RoverSpek: Spek({
             }
         }
 
-        on("forward command and South direction") {
-
-            it("should rover moves backwards") {
-                val command = arrayOf("f")
-                val rover = Rover(0, 0, "S")
-                val roverPosition = rover.move(command)
-                roverPosition `should equal` Pair(0,-1)
-            }
-        }
-
         on("backward command and North direction") {
 
             it("should rover moves backwards") {
                 val command = arrayOf("b")
                 val rover = Rover(0, 0, "N")
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Pair(0,-1)
+            }
+        }
+
+        on("forward command and South direction") {
+
+            it("should rover moves backwards") {
+                val command = arrayOf("f")
+                val rover = Rover(0, 0, "S")
                 val roverPosition = rover.move(command)
                 roverPosition `should equal` Pair(0,-1)
             }
@@ -48,6 +48,26 @@ class RoverSpek: Spek({
             }
         }
 
+        on("forward command and East direction") {
+
+            it("should rover moves forwards") {
+                val command = arrayOf("f")
+                val rover = Rover(0, 0, "E")
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Pair(1,0)
+            }
+        }
+
+//        on("backward command and East direction") {
+//
+//            it("should rover moves forwards") {
+//                val command = arrayOf("b")
+//                val rover = Rover(0, 0, "E")
+//                val roverPosition = rover.move(command)
+//                roverPosition `should equal` Pair(-1,0)
+//            }
+//        }
+
         on("empty array of commands") {
 
             it("should not move") {
@@ -61,7 +81,7 @@ class RoverSpek: Spek({
         on("wrong direction") {
 
             it("should throw incorrect position exception") {
-                val command = emptyArray<String>()
+                val command = arrayOf("f")
                 assertFailsWith<IncorrectPositionException> {
                     val rover = Rover(0, 0, "wrong direction")
                     rover.move(command)
@@ -90,25 +110,26 @@ enum class COMMANDS {
     F, B, R, L
 }
 
-
 class Rover(private val x: Int, private val y: Int, private val direction: String) {
     fun move(commands: Array<String>): Pair<Int, Int> {
-        val validCommands = validateCommands(commands)
+        if (commands.isEmpty()) return Pair(x, y)
 
         val moveMap = mapOf("N" to Pair(0,1), "S" to Pair(0, -1) )
 
-        val addedPosition = when(moveMap.containsKey(direction)) {
+        val validCommands = try { validateCommands(commands) } catch (e: IncorrectCommandException) { throw e}
+        val validPosition = try { validatePosition(moveMap) } catch (e: IncorrectPositionException) { throw  e}
+
+        return when (validCommands[0]) {
+            COMMANDS.F -> Pair(x + validPosition.first, y + validPosition.second)
+            COMMANDS.B -> Pair(x + validPosition.first, y - validPosition.second)
+            else -> throw Exception()
+        }
+    }
+
+    private fun validatePosition(moveMap: Map<String, Pair<Int, Int>>): Pair<Int, Int> {
+        return when (moveMap.containsKey(direction)) {
             true -> moveMap[direction]!!
             else -> throw IncorrectPositionException()
-        }
-
-        if (commands.isEmpty()) {
-            return Pair(x, y)
-        }
-        return when (validCommands[0]) {
-            COMMANDS.F -> Pair(x + addedPosition.first, y + addedPosition.second)
-            COMMANDS.B -> Pair(x + addedPosition.first, y - addedPosition.second)
-            else -> throw Exception()
         }
     }
 
