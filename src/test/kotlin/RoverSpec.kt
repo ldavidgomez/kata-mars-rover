@@ -58,15 +58,15 @@ class RoverSpek: Spek({
             }
         }
 
-//        on("backward command and East direction") {
-//
-//            it("should rover moves forwards") {
-//                val command = arrayOf("b")
-//                val rover = Rover(0, 0, "E")
-//                val roverPosition = rover.move(command)
-//                roverPosition `should equal` Pair(-1,0)
-//            }
-//        }
+        on("backward command and East direction") {
+
+            it("should rover moves forwards") {
+                val command = arrayOf("b")
+                val rover = Rover(0, 0, "E")
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Pair(-1,0)
+            }
+        }
 
         on("empty array of commands") {
 
@@ -110,23 +110,38 @@ enum class COMMANDS {
     F, B, R, L
 }
 
+data class Position(private val x: Int, private val y: Int, private val direction: String)
+
 class Rover(private val x: Int, private val y: Int, private val direction: String) {
     fun move(commands: Array<String>): Pair<Int, Int> {
         if (commands.isEmpty()) return Pair(x, y)
 
-        val moveMap = mapOf("N" to Pair(0,1), "S" to Pair(0, -1) )
+        val moveMap = mapOf("N" to Pair(0,1), "S" to Pair(0, -1), "E" to Pair(1, 0))
+
+        val movement =
+                mapOf(
+                        "N" to mapOf(
+                                Pair(COMMANDS.F, Pair(0,1)),
+                                Pair(COMMANDS.B, Pair(0,-1))
+                        ),
+                        "S" to mapOf(
+                                Pair(COMMANDS.F, Pair(0,-1)),
+                                Pair(COMMANDS.B, Pair(0,1))
+                        ),
+                        "E" to mapOf(
+                                Pair(COMMANDS.F, Pair(1,0)),
+                                Pair(COMMANDS.B, Pair(-1,0))
+                        )
+            )
+
 
         val validCommands = try { validateCommands(commands) } catch (e: IncorrectCommandException) { throw e}
-        val validPosition = try { validatePosition(moveMap) } catch (e: IncorrectPositionException) { throw  e}
+        val validCardinalPosition = try { validatePosition(movement) } catch (e: IncorrectPositionException) { throw  e}
 
-        return when (validCommands[0]) {
-            COMMANDS.F -> Pair(x + validPosition.first, y + validPosition.second)
-            COMMANDS.B -> Pair(x + validPosition.first, y - validPosition.second)
-            else -> throw Exception()
-        }
+        return Pair(x + validCardinalPosition[validCommands[0]]!!.first, y + validCardinalPosition[validCommands[0]]!!.second)
     }
 
-    private fun validatePosition(moveMap: Map<String, Pair<Int, Int>>): Pair<Int, Int> {
+    private fun validatePosition(moveMap: Map<String, Map<COMMANDS, Pair<Int, Int>>>): Map<COMMANDS, Pair<Int, Int>> {
         return when (moveMap.containsKey(direction)) {
             true -> moveMap[direction]!!
             else -> throw IncorrectPositionException()
