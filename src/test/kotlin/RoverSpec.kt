@@ -132,32 +132,29 @@ enum class COMMANDS {
 
 data class Position(private val x: Int, private val y: Int, private val direction: String)
 
+private val movement =
+        mapOf(
+                "N" to mapOf(
+                        Pair(COMMANDS.F, Pair(0,1)),
+                        Pair(COMMANDS.B, Pair(0,-1))
+                ),
+                "S" to mapOf(
+                        Pair(COMMANDS.F, Pair(0,-1)),
+                        Pair(COMMANDS.B, Pair(0,1))
+                ),
+                "E" to mapOf(
+                        Pair(COMMANDS.F, Pair(1,0)),
+                        Pair(COMMANDS.B, Pair(-1,0))
+                ),
+                "W" to mapOf(
+                        Pair(COMMANDS.F, Pair(-1,0)),
+                        Pair(COMMANDS.B, Pair(1,0))
+                )
+        )
+
 class Rover(private val x: Int, private val y: Int, private val direction: String) {
     fun move(commands: Array<String>): Pair<Int, Int> {
         if (commands.isEmpty()) return Pair(x, y)
-
-        val moveMap = mapOf("N" to Pair(0,1), "S" to Pair(0, -1), "E" to Pair(1, 0))
-
-        val movement =
-                mapOf(
-                        "N" to mapOf(
-                                Pair(COMMANDS.F, Pair(0,1)),
-                                Pair(COMMANDS.B, Pair(0,-1))
-                        ),
-                        "S" to mapOf(
-                                Pair(COMMANDS.F, Pair(0,-1)),
-                                Pair(COMMANDS.B, Pair(0,1))
-                        ),
-                        "E" to mapOf(
-                                Pair(COMMANDS.F, Pair(1,0)),
-                                Pair(COMMANDS.B, Pair(-1,0))
-                        ),
-                        "W" to mapOf(
-                                Pair(COMMANDS.F, Pair(-1,0)),
-                                Pair(COMMANDS.B, Pair(1,0))
-                        )
-            )
-
 
         val validCommands = try { validateCommands(commands) } catch (e: IncorrectCommandException) { throw e}
         val validCardinalPosition = try { validatePosition(movement) } catch (e: IncorrectPositionException) { throw  e}
