@@ -149,6 +149,16 @@ class RoverSpek: Spek({
                 roverPosition `should equal` Position(0,0, "W")
             }
         }
+
+        on("right command and South direction") {
+
+            it("should rover turn right and direction is West") {
+                val command = arrayOf("r")
+                val rover = Rover(Position(0, 0, "W"))
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Position(0,0, "N")
+            }
+        }
     }
 })
 
