@@ -150,11 +150,51 @@ class RoverSpek: Spek({
             }
         }
 
-        on("right command and South direction") {
+        on("right command and West direction") {
 
-            it("should rover turn right and direction is West") {
+            it("should rover turn right and direction is North") {
                 val command = arrayOf("r")
                 val rover = Rover(Position(0, 0, "W"))
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Position(0,0, "N")
+            }
+        }
+
+        on("left command and North direction") {
+
+            it("should rover turn left and direction is West") {
+                val command = arrayOf("l")
+                val rover = Rover(Position(0, 0, "N"))
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Position(0,0, "W")
+            }
+        }
+
+        on("left command and West direction") {
+
+            it("should rover turn left and direction is South") {
+                val command = arrayOf("l")
+                val rover = Rover(Position(0, 0, "W"))
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Position(0,0, "S")
+            }
+        }
+
+        on("left command and South direction") {
+
+            it("should rover turn left and direction is East") {
+                val command = arrayOf("l")
+                val rover = Rover(Position(0, 0, "S"))
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Position(0,0, "E")
+            }
+        }
+
+        on("right left and East direction") {
+
+            it("should rover turn left and direction is North") {
+                val command = arrayOf("l")
+                val rover = Rover(Position(0, 0, "E"))
                 val roverPosition = rover.move(command)
                 roverPosition `should equal` Position(0,0, "N")
             }
