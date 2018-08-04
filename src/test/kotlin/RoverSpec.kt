@@ -200,6 +200,34 @@ class RoverSpek: Spek({
             }
         }
     }
+
+    describe("given a multiple command ") {
+
+        on("forward right forward command and North direction") {
+
+            it("should rover moves correct position") {
+                val command = arrayOf("f","r","f")
+                val rover = Rover(Position(0, 0, N))
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Position(1,1, E)
+            }
+        }
+    }
+
+    describe("given a multiple command ") {
+
+        on("forward right forward left back command and South direction") {
+
+            it("should rover moves correct position") {
+                val command = arrayOf("f","r","f","l","b")
+                val rover = Rover(Position(0, 0, S))
+                val roverPosition = rover.move(command)
+                roverPosition `should equal` Position(-1,0, S)
+            }
+        }
+    }
+
+
 })
 
 class IncorrectPositionException : Exception()
@@ -252,14 +280,36 @@ private val movementMap =
         )
 
 class Rover(private val position: Position) {
+
+    private val path = ArrayList<Position>()
+
+    init {
+        path.add(position)
+    }
+
     fun move(commands: Array<String>): Position {
-        if (commands.isEmpty()) return position
+        if (commands.isEmpty()) return path.last()
 
-        val validCommands = try { validateCommands(commands) } catch (e: IncorrectCommandException) { throw e}
-        val validCardinalPosition = try { validatePosition(movementMap) } catch (e: IncorrectPositionException) { throw  e}
+        val validCommands = try {
+            validateCommands(commands)
+        } catch (e: IncorrectCommandException) {
+            throw e
+        }
 
-        val newDirection = calculateDirection(validCommands[0], position.direction)
-        return Position(position.x + validCardinalPosition[validCommands[0]]!!.first, position.y + validCardinalPosition[validCommands[0]]!!.second, newDirection)
+        validCommands.map {
+            val validCardinalPosition = try {
+                validatePosition(movementMap)
+            } catch (e: IncorrectPositionException) {
+                throw  e
+            }
+
+            val newDirection = calculateDirection(it, path.last().direction)
+            val newPosition = Position(path.last().x + validCardinalPosition[it]!!.first, path.last().y + validCardinalPosition[it]!!.second, newDirection)
+
+            path.add(newPosition)
+        }
+
+        return path.last()
     }
 
     private fun calculateDirection(commands: COMMANDS, direction: String): String {
@@ -301,8 +351,8 @@ class Rover(private val position: Position) {
     }
 
     private fun validatePosition(moveMap: Map<String, Map<COMMANDS, Pair<Int, Int>>>): Map<COMMANDS, Pair<Int, Int>> {
-        return when (moveMap.containsKey(position.direction)) {
-            true -> moveMap[position.direction]!!
+        return when (moveMap.containsKey(path.last().direction)) {
+            true -> moveMap[path.last().direction]!!
             else -> throw IncorrectPositionException()
         }
     }
