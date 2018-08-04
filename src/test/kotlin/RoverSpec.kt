@@ -82,10 +82,67 @@ class RoverSpek: Spek({
         }
     }
 
+    describe("given a map") {
+
+        on("send a wrong size") {
+
+            it("should throw IncorrectSizeException") {
+                val end = Pair(-5, -30)
+                val obstacles = ArrayList<Pair<Int, Int>>()
+                obstacles.add(Pair(20,20))
+                assertFailsWith<IncorrectSizeException> {
+                    Mapping(end, obstacles)
+                }
+            }
+        }
+
+        on("send a wrong coordinates") {
+
+            it("should throw IncorrectPositionException") {
+                val end = Pair(50, 30)
+                val obstacles = ArrayList<Pair<Int, Int>>()
+                obstacles.add(Pair(70,70))
+                assertFailsWith<IncorrectPositionException> {
+                    Mapping(end, obstacles)
+                }
+            }
+        }
+
+        on("send a correct coordinates") {
+
+            it("should generate a map") {
+
+                val resultMap = arrayListOf<ArrayList<String>>()
+
+                resultMap.add(arrayListOf("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"))
+
+                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
+                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
+                resultMap.add(arrayListOf("|", " ", "O", " ", " ", " ", " ", "O", " ", " ", " ", "|"))
+                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
+                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
+                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
+                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
+                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
+                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
+                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
+
+                resultMap.add(arrayListOf("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"))
+
+                val end = Pair(10, 10)
+                val obstacles = ArrayList<Pair<Int, Int>>()
+                obstacles.add(Pair(2,3))
+                obstacles.add(Pair(7,3))
+                resultMap.joinToString(separator = "") `should equal` Mapping(end,  obstacles).toString()
+            }
+        }
+    }
+
 })
 
 class IncorrectPositionException : Exception()
 class IncorrectCommandException : Exception()
+class IncorrectSizeException : Exception()
 
 enum class COMMANDS {
     F, B, R, L
@@ -132,6 +189,66 @@ private val movementMap =
                         Pair(COMMANDS.L, Pair(0,0))
                 )
         )
+
+data class Mapping(val size: Pair<Int, Int>, val obstacles: ArrayList<Pair<Int, Int>>) {
+
+    private val map = arrayListOf<ArrayList<String>>()
+
+    init {
+        if(size.first < 0 || size.second < 0)
+            throw IncorrectSizeException()
+
+        obstacles.forEach{
+            if(it.first < 0 || it.second < 0)
+                throw IncorrectPositionException()
+
+            if(it.first > size.first || it.second > size.second)
+                throw IncorrectPositionException()
+        }
+
+        generateMap()
+        print()
+    }
+
+    override fun toString(): String {
+        return map.joinToString(separator = "")
+    }
+
+    private fun generateMap() {
+        val limit = ArrayList<String>()
+        for(i in 0..size.first + 1)
+            limit.add("-")
+
+        map.add(limit)
+
+        for(y in 1..size.second) {
+            val line = ArrayList<String>()
+            line.add("|")
+            for(x in 1..size.first) {
+                line.add(when(x) {
+                    in 0..size.first -> when(obstacles.contains(Pair(x,y))){
+                        true -> "O"
+                        else -> " "
+                    }
+                    else -> throw IncorrectSizeException()
+                })
+            }
+            line.add("|")
+            map.add(line)
+        }
+        map.add(limit)
+    }
+
+    private fun print() {
+        println()
+        println()
+        println()
+        println("Map starts at x=0 y=0 ends at x=${size.first} y=${size.second}")
+        println()
+        map.map { println(it.joinToString(separator = "")) }
+    }
+}
+
 
 class Rover(private val position: Position) {
 
