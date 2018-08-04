@@ -50,9 +50,6 @@ class RoverSpek: Spek({
                 roverPosition `should equal` Position(1,1, E)
             }
         }
-    }
-
-    describe("given a multiple command ") {
 
         on("forward right forward left back command and South direction") {
 
@@ -63,9 +60,6 @@ class RoverSpek: Spek({
                 roverPosition `should equal` Position(-1,0, S)
             }
         }
-    }
-
-    describe("given a multiple command ") {
 
         on("forward forward right forward left back command and East direction") {
 
@@ -73,12 +67,9 @@ class RoverSpek: Spek({
                 val command = arrayOf("f","f","r","f","l","b")
                 val rover = Rover(Position(0, 0, E))
                 val roverPosition = rover.move(command)
-                roverPosition `should equal` Position(2,0, E)
+                roverPosition `should equal` Position(1,-1, E)
             }
         }
-    }
-
-    describe("given a multiple command ") {
 
         on("forward forward right forward left back command and West direction") {
 
