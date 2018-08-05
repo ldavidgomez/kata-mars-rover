@@ -3,6 +3,7 @@ import org.jetbrains.spek.api.Spek
 import org.jetbrains.spek.api.dsl.describe
 import org.jetbrains.spek.api.dsl.it
 import org.jetbrains.spek.api.dsl.on
+import java.nio.file.InvalidPathException
 import kotlin.test.assertFailsWith
 
 class RoverSpek: Spek({
@@ -41,12 +42,12 @@ class RoverSpek: Spek({
 
                 resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
                 resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
                 resultMap.add(arrayListOf(" ", "O", " ", " ", " ", " ", "O", " ", " ", " "))
-                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
-                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
-                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
-                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
-                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
                 resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
                 resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
 
@@ -87,11 +88,18 @@ class RoverSpek: Spek({
 
     describe("given a multiple command ") {
 
+        val end = Pair(10, 10)
+        val obstacles = ArrayList<Pair<Int, Int>>()
+        obstacles.add(Pair(2,3))
+        obstacles.add(Pair(7,3))
+        obstacles.add(Pair(8,9))
+        val mapTestCase = Mapping(end, obstacles)
+
         on("empty array of commands") {
 
             it("should not move") {
                 val command = emptyArray<String>()
-                val rover = Rover(Position(0, 0, S))
+                val rover = Rover(Position(0, 0, S), mapTestCase)
                 val roverPosition = rover.move(command)
                 roverPosition `should equal` Position(0,0, S)
             }
@@ -102,7 +110,7 @@ class RoverSpek: Spek({
             it("should throw incorrect command exception") {
                 val command = arrayOf("wrong command")
                 assertFailsWith<IncorrectCommandException> {
-                    val rover = Rover(Position(0, 0, N))
+                    val rover = Rover(Position(0, 0, N), mapTestCase)
                     rover.move(command)
                 }
             }
@@ -113,7 +121,7 @@ class RoverSpek: Spek({
             it("should throw incorrect position exception") {
                 val command = arrayOf("r")
                 assertFailsWith<IncorrectPositionException> {
-                    val rover = Rover(Position(0, 0, "A"))
+                    val rover = Rover(Position(0, 0, "A"), mapTestCase)
                     rover.move(command)
                 }
             }
@@ -123,7 +131,7 @@ class RoverSpek: Spek({
 
             it("should rover moves correct position") {
                 val command = arrayOf("f","r","f")
-                val rover = Rover(Position(0, 0, N))
+                val rover = Rover(Position(0, 0, N), mapTestCase)
                 val roverPosition = rover.move(command)
                 roverPosition `should equal` Position(1,1, E)
             }
@@ -133,9 +141,9 @@ class RoverSpek: Spek({
 
             it("should rover moves correct position") {
                 val command = arrayOf("f","r","f","l","b")
-                val rover = Rover(Position(0, 0, S))
+                val rover = Rover(Position(0, 0, S), mapTestCase)
                 val roverPosition = rover.move(command)
-                roverPosition `should equal` Position(-1,0, S)
+                roverPosition `should equal` Position(9,0, S)
             }
         }
 
@@ -143,9 +151,9 @@ class RoverSpek: Spek({
 
             it("should rover moves correct position") {
                 val command = arrayOf("f","f","r","f","l","b")
-                val rover = Rover(Position(0, 0, E))
+                val rover = Rover(Position(0, 0, E), mapTestCase)
                 val roverPosition = rover.move(command)
-                roverPosition `should equal` Position(1,-1, E)
+                roverPosition `should equal` Position(1,9, E)
             }
         }
 
@@ -153,20 +161,44 @@ class RoverSpek: Spek({
 
             it("should rover moves correct position") {
                 val command = arrayOf("f","f","r","f","l","b")
-                val rover = Rover(Position(0, 0, W))
+                val rover = Rover(Position(0, 0, W), mapTestCase)
                 val roverPosition = rover.move(command)
-                roverPosition `should equal` Position(-1, 1, W)
+                roverPosition `should equal` Position(9, 1, W)
             }
         }
 
+        on("forward to position with obstacle") {
+
+            it("should rover not moves and throws IncorrectPathException") {
+                val command = arrayOf("f")
+                assertFailsWith<IncorrectPathException> {
+                    val rover = Rover(Position(2, 2, N), mapTestCase)
+                    rover.move(command)
+                    rover.whereAreYou `should equal` Position(2, 2, N)
+                }
+            }
+        }
+
+//        on("forward to edge position") {
+//
+//            it("should rover moves correct map position") {
+//                val command = arrayOf("f")
+//                val rover = Rover(Position(0, 0, N), mapTestCae)
+//                val roverPosition = rover.move(command)
+//                roverPosition `should equal` Position(0, 10, N)
+//            }
+//        }
     }
 
 })
 
+
 class IncorrectPositionException : Exception()
 class IncorrectCommandException : Exception()
 class IncorrectSizeException : Exception()
-class UnexpectectPointStateException : Exception()
+class UnexpectedPointStateException : Exception()
+class IncorrectPathException : Exception()
+
 
 enum class COMMANDS {
     F, B, R, L
@@ -214,7 +246,7 @@ private val movementMap =
                 )
         )
 
-class Mapping(private val size: Pair<Int, Int>, private val obstacles: ArrayList<Pair<Int, Int>>) {
+class Mapping(val size: Pair<Int, Int>, private val obstacles: ArrayList<Pair<Int, Int>>) {
 
     private val map = arrayListOf<ArrayList<String>>()
 
@@ -239,11 +271,11 @@ class Mapping(private val size: Pair<Int, Int>, private val obstacles: ArrayList
     }
 
     private fun generateMap() {
-        for(y in 1..size.second) {
+        for(y in size.second downTo 1) {
             val line = ArrayList<String>()
             for(x in 1..size.first) {
                 line.add(when(x) {
-                    in 0..size.first -> when(obstacles.contains(Pair(x,y))){
+                    in 1..size.first -> when(obstacles.contains(Pair(x,y))){
                         true -> "O"
                         else -> " "
                     }
@@ -272,21 +304,24 @@ class Mapping(private val size: Pair<Int, Int>, private val obstacles: ArrayList
     }
 
     fun pointState(x: Int, y: Int): String {
-        return when(map[y-1][x-1]){
+        return when(map[x][y]){
             " " -> " "
             "O" -> "O"
-            else -> throw UnexpectectPointStateException()
+            else -> throw UnexpectedPointStateException()
         }
     }
 }
 
 
-class Rover(private val position: Position) {
+class Rover(private val position: Position, private val mapping: Mapping) {
 
     private val path = ArrayList<Position>()
+    val whereAreYou: Position
+
 
     init {
         path.add(position)
+        whereAreYou = this.path.last()
     }
 
     fun move(commands: Array<String>): Position {
@@ -305,13 +340,45 @@ class Rover(private val position: Position) {
                 throw  e
             }
 
-            val newDirection = calculateDirection(it, path.last().cardinalDirection)
-            val newPosition = Position(path.last().x + validCardinalPosition[it]!!.first, path.last().y + validCardinalPosition[it]!!.second, newDirection)
+            val nextPosition = nextPosition(it, validCardinalPosition)
 
-            path.add(newPosition)
+            try {
+                isValidPosition(nextPosition)
+                path.add(nextPosition)
+            } catch(e: InvalidPathException) {
+                throw e
+            }
         }
 
         return path.last()
+    }
+
+    private fun nextPosition(it: COMMANDS, validCardinalPosition: Map<COMMANDS, Pair<Int, Int>>): Position {
+        val newDirection = calculateDirection(it, path.last().cardinalDirection)
+
+        val newPosition = Position(path.last().x + validCardinalPosition[it]!!.first, path.last().y + validCardinalPosition[it]!!.second, newDirection)
+        val x = when{
+            newPosition.x < 0 -> mapping.size.first - 1
+            newPosition.x > mapping.size.first - 1 -> 0
+            else -> newPosition.x
+        }
+        val y = when{
+            newPosition.y < 0 -> mapping.size.second - 1
+            newPosition.y > mapping.size.second - 1 -> 0
+            else -> newPosition.y
+        }
+
+
+        return Position(x, y, newDirection)
+    }
+
+    private fun isValidPosition(position: Position): Boolean {
+        val correctedX = mapping.size.first -1  - position.x
+        val correctedY = mapping.size.second -1 - position.y
+        return when(mapping.pointState(correctedX, correctedY)) {
+            " " -> true
+            else -> throw IncorrectPathException()
+        }
     }
 
     private fun calculateDirection(commands: COMMANDS, direction: String): String {
