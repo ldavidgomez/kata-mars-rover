@@ -76,18 +76,24 @@ class RoverSpek: Spek({
             }
         }
 
-        on("send a correct obstacle coordinates point") {
+        val obstaclesTestCase = arrayListOf(
+                        Pair(2,3),
+                        Pair(7,3),
+                        Pair(8,9)
+        )
 
-            it("should return position state obstacle") {
-                val end = Pair(10, 10)
-                val obstacles = ArrayList<Pair<Int, Int>>()
-                obstacles.add(Pair(2,3))
-                obstacles.add(Pair(7,3))
-                obstacles.add(Pair(8,9))
-                val resultMap = Mapping(end, obstacles)
-                val resultPoint = resultMap.pointState(8, 9)
-                resultPoint `should equal` "O"
+        obstaclesTestCase.forEach {
+            on("send a correct obstacle coordinates point") {
 
+                it("should return position state obstacle") {
+                    val end = Pair(10, 10)
+                    val obstacles = ArrayList<Pair<Int, Int>>()
+                    obstacles.add(it)
+                    val resultMap = Mapping(end, obstacles)
+                    val resultPoint = resultMap.pointState(it.first, it.second)
+                    resultPoint `should equal` "O"
+
+                }
             }
         }
     }
