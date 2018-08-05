@@ -170,7 +170,7 @@ class RoverSpek: Spek({
         on("forward to position with obstacle") {
 
             it("should rover not moves and throws IncorrectPathException") {
-                val command = arrayOf("f")
+                val command = arrayOf("f","r","f")
                 assertFailsWith<IncorrectPathException> {
                     val rover = Rover(Position(2, 2, N), mapTestCase)
                     rover.move(command)
@@ -178,16 +178,6 @@ class RoverSpek: Spek({
                 }
             }
         }
-
-//        on("forward to edge position") {
-//
-//            it("should rover moves correct map position") {
-//                val command = arrayOf("f")
-//                val rover = Rover(Position(0, 0, N), mapTestCae)
-//                val roverPosition = rover.move(command)
-//                roverPosition `should equal` Position(0, 10, N)
-//            }
-//        }
     }
 
 })
@@ -197,7 +187,7 @@ class IncorrectPositionException : Exception()
 class IncorrectCommandException : Exception()
 class IncorrectSizeException : Exception()
 class UnexpectedPointStateException : Exception()
-class IncorrectPathException : Exception()
+class IncorrectPathException(point: Pair<Int, Int>) : Exception()
 
 
 enum class COMMANDS {
@@ -377,7 +367,7 @@ class Rover(private val position: Position, private val mapping: Mapping) {
         val correctedY = mapping.size.second -1 - position.y
         return when(mapping.pointState(correctedX, correctedY)) {
             " " -> true
-            else -> throw IncorrectPathException()
+            else -> throw IncorrectPathException(Pair(position.x, position.y))
         }
     }
 
