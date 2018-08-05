@@ -39,8 +39,6 @@ class RoverSpek: Spek({
 
                 val resultMap = arrayListOf<ArrayList<String>>()
 
-//                resultMap.add(arrayListOf("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"))
-
                 resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
                 resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
                 resultMap.add(arrayListOf(" ", "O", " ", " ", " ", " ", "O", " ", " ", " "))
@@ -52,8 +50,6 @@ class RoverSpek: Spek({
                 resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
                 resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
 
-//                resultMap.add(arrayListOf("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"))
-
                 val end = Pair(10, 10)
                 val obstacles = ArrayList<Pair<Int, Int>>()
                 obstacles.add(Pair(2,3))
@@ -62,13 +58,16 @@ class RoverSpek: Spek({
             }
         }
 
-        val obstaclesClearTestCase = arrayListOf(
-                Pair(1,1),
-                Pair(6,3),
-                Pair(7,9)
+        val obstaclesTestCase = arrayListOf(
+                Pair(1,1) to " ",
+                Pair(6,3) to " ",
+                Pair(7,9) to " ",
+                Pair(2,3) to "O",
+                Pair(7,3) to "O",
+                Pair(8,9) to "O"
         )
 
-        obstaclesClearTestCase.forEach {
+        obstaclesTestCase.forEach {
             on("send a correct clear coordinates point") {
 
                 it("should return position state clear") {
@@ -78,29 +77,9 @@ class RoverSpek: Spek({
                     obstacles.add(Pair(7,3))
                     obstacles.add(Pair(8,9))
                     val resultMap = Mapping(end, obstacles)
-                    val resultPoint = resultMap.pointState(it.first, it.second)
-                    resultPoint `should equal` " "
+                    val resultPoint = resultMap.pointState(it.first.first, it.first.second)
+                    resultPoint `should equal` it.second
 
-                }
-            }
-        }
-
-        val obstaclesTestCase = arrayListOf(
-                        Pair(2,3),
-                        Pair(7,3),
-                        Pair(8,9)
-        )
-
-        obstaclesTestCase.forEach {
-            on("send a correct obstacle coordinates point") {
-
-                it("should return position state obstacle") {
-                    val end = Pair(10, 10)
-                    val obstacles = ArrayList<Pair<Int, Int>>()
-                    obstacles.add(it)
-                    val resultMap = Mapping(end, obstacles)
-                    val resultPoint = resultMap.pointState(it.first, it.second)
-                    resultPoint `should equal` "O"
                 }
             }
         }
