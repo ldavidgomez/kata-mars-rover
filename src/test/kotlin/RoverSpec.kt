@@ -62,17 +62,26 @@ class RoverSpek: Spek({
             }
         }
 
-        on("send a correct clear coordinates point") {
+        val obstaclesClearTestCase = arrayListOf(
+                Pair(1,1),
+                Pair(6,3),
+                Pair(7,9)
+        )
 
-            it("should return position state clear") {
-                val end = Pair(10, 10)
-                val obstacles = ArrayList<Pair<Int, Int>>()
-                obstacles.add(Pair(2,3))
-                obstacles.add(Pair(7,3))
-                val resultMap = Mapping(end, obstacles)
-                val resultPoint = resultMap.pointState(1, 1)
-                resultPoint `should equal` " "
+        obstaclesClearTestCase.forEach {
+            on("send a correct clear coordinates point") {
 
+                it("should return position state clear") {
+                    val end = Pair(10, 10)
+                    val obstacles = ArrayList<Pair<Int, Int>>()
+                    obstacles.add(Pair(2,3))
+                    obstacles.add(Pair(7,3))
+                    obstacles.add(Pair(8,9))
+                    val resultMap = Mapping(end, obstacles)
+                    val resultPoint = resultMap.pointState(it.first, it.second)
+                    resultPoint `should equal` " "
+
+                }
             }
         }
 
@@ -92,7 +101,6 @@ class RoverSpek: Spek({
                     val resultMap = Mapping(end, obstacles)
                     val resultPoint = resultMap.pointState(it.first, it.second)
                     resultPoint `should equal` "O"
-
                 }
             }
         }
