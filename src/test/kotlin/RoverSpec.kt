@@ -108,7 +108,7 @@ class RoverSpek: Spek({
             }
         }
 
-        on("wrong cardinal") {
+        on("wrong cardinalDirection") {
 
             it("should throw incorrect position exception") {
                 val command = arrayOf("r")
@@ -119,7 +119,7 @@ class RoverSpek: Spek({
             }
         }
 
-        on("forward right forward command and North cardinal") {
+        on("forward right forward command and North cardinalDirection") {
 
             it("should rover moves correct position") {
                 val command = arrayOf("f","r","f")
@@ -129,7 +129,7 @@ class RoverSpek: Spek({
             }
         }
 
-        on("forward right forward left back command and South cardinal") {
+        on("forward right forward left back command and South cardinalDirection") {
 
             it("should rover moves correct position") {
                 val command = arrayOf("f","r","f","l","b")
@@ -139,7 +139,7 @@ class RoverSpek: Spek({
             }
         }
 
-        on("forward forward right forward left back command and East cardinal") {
+        on("forward forward right forward left back command and East cardinalDirection") {
 
             it("should rover moves correct position") {
                 val command = arrayOf("f","f","r","f","l","b")
@@ -149,7 +149,7 @@ class RoverSpek: Spek({
             }
         }
 
-        on("forward forward right forward left back command and West cardinal") {
+        on("forward forward right forward left back command and West cardinalDirection") {
 
             it("should rover moves correct position") {
                 val command = arrayOf("f","f","r","f","l","b")
@@ -179,9 +179,9 @@ private const val W = "W"
 
 private val CARDINAL_POINTS = mapOf(N to 0, E to 1, S to 2, W to 3)
 
-data class Position(val x: Int, val y: Int, val cardinal: String) {
+data class Position(val x: Int, val y: Int, val cardinalDirection: String) {
     init {
-        if (CARDINAL_POINTS[cardinal] == null)
+        if (CARDINAL_POINTS[cardinalDirection] == null)
             throw IncorrectPositionException()
     }
 }
@@ -305,7 +305,7 @@ class Rover(private val position: Position) {
                 throw  e
             }
 
-            val newDirection = calculateDirection(it, path.last().cardinal)
+            val newDirection = calculateDirection(it, path.last().cardinalDirection)
             val newPosition = Position(path.last().x + validCardinalPosition[it]!!.first, path.last().y + validCardinalPosition[it]!!.second, newDirection)
 
             path.add(newPosition)
@@ -334,8 +334,8 @@ class Rover(private val position: Position) {
     }
 
     private fun validatePosition(moveMap: Map<String, Map<COMMANDS, Pair<Int, Int>>>): Map<COMMANDS, Pair<Int, Int>> {
-        return when (moveMap.containsKey(path.last().cardinal)) {
-            true -> moveMap[path.last().cardinal]!!
+        return when (moveMap.containsKey(path.last().cardinalDirection)) {
+            true -> moveMap[path.last().cardinalDirection]!!
             else -> throw IncorrectPositionException()
         }
     }
