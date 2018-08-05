@@ -7,6 +7,91 @@ import kotlin.test.assertFailsWith
 
 class RoverSpek: Spek({
 
+    describe("given a map") {
+
+        on("send a wrong size") {
+
+            it("should throw IncorrectSizeException") {
+                val end = Pair(-5, -30)
+                val obstacles = ArrayList<Pair<Int, Int>>()
+                obstacles.add(Pair(20,20))
+                assertFailsWith<IncorrectSizeException> {
+                    Mapping(end, obstacles)
+                }
+            }
+        }
+
+        on("send a wrong coordinates") {
+
+            it("should throw IncorrectPositionException") {
+                val end = Pair(50, 30)
+                val obstacles = ArrayList<Pair<Int, Int>>()
+                obstacles.add(Pair(70,70))
+                assertFailsWith<IncorrectPositionException> {
+                    Mapping(end, obstacles)
+                }
+            }
+        }
+
+        on("send a correct coordinates") {
+
+            it("should generate a map") {
+
+                val resultMap = arrayListOf<ArrayList<String>>()
+
+//                resultMap.add(arrayListOf("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"))
+
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", "O", " ", " ", " ", " ", "O", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+                resultMap.add(arrayListOf(" ", " ", " ", " ", " ", " ", " ", " ", " ", " "))
+
+//                resultMap.add(arrayListOf("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"))
+
+                val end = Pair(10, 10)
+                val obstacles = ArrayList<Pair<Int, Int>>()
+                obstacles.add(Pair(2,3))
+                obstacles.add(Pair(7,3))
+                resultMap.joinToString(separator = "") `should equal` Mapping(end,  obstacles).toString()
+            }
+        }
+
+        on("send a correct clear coordinates point") {
+
+            it("should return position state clear") {
+                val end = Pair(10, 10)
+                val obstacles = ArrayList<Pair<Int, Int>>()
+                obstacles.add(Pair(2,3))
+                obstacles.add(Pair(7,3))
+                val resultMap = Mapping(end, obstacles)
+                val resultPoint = resultMap.pointState(1, 1)
+                resultPoint `should equal` " "
+
+            }
+        }
+
+        on("send a correct obstacle coordinates point") {
+
+            it("should return position state obstacle") {
+                val end = Pair(10, 10)
+                val obstacles = ArrayList<Pair<Int, Int>>()
+                obstacles.add(Pair(2,3))
+                obstacles.add(Pair(7,3))
+                obstacles.add(Pair(8,9))
+                val resultMap = Mapping(end, obstacles)
+                val resultPoint = resultMap.pointState(8, 9)
+                resultPoint `should equal` "O"
+
+            }
+        }
+    }
+
     describe("given a multiple command ") {
 
         on("empty array of commands") {
@@ -82,67 +167,12 @@ class RoverSpek: Spek({
         }
     }
 
-    describe("given a map") {
-
-        on("send a wrong size") {
-
-            it("should throw IncorrectSizeException") {
-                val end = Pair(-5, -30)
-                val obstacles = ArrayList<Pair<Int, Int>>()
-                obstacles.add(Pair(20,20))
-                assertFailsWith<IncorrectSizeException> {
-                    Mapping(end, obstacles)
-                }
-            }
-        }
-
-        on("send a wrong coordinates") {
-
-            it("should throw IncorrectPositionException") {
-                val end = Pair(50, 30)
-                val obstacles = ArrayList<Pair<Int, Int>>()
-                obstacles.add(Pair(70,70))
-                assertFailsWith<IncorrectPositionException> {
-                    Mapping(end, obstacles)
-                }
-            }
-        }
-
-        on("send a correct coordinates") {
-
-            it("should generate a map") {
-
-                val resultMap = arrayListOf<ArrayList<String>>()
-
-                resultMap.add(arrayListOf("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"))
-
-                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
-                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
-                resultMap.add(arrayListOf("|", " ", "O", " ", " ", " ", " ", "O", " ", " ", " ", "|"))
-                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
-                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
-                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
-                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
-                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
-                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
-                resultMap.add(arrayListOf("|", " ", " ", " ", " ", " ", " ", " ", " ", " ", " ", "|"))
-
-                resultMap.add(arrayListOf("-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-", "-"))
-
-                val end = Pair(10, 10)
-                val obstacles = ArrayList<Pair<Int, Int>>()
-                obstacles.add(Pair(2,3))
-                obstacles.add(Pair(7,3))
-                resultMap.joinToString(separator = "") `should equal` Mapping(end,  obstacles).toString()
-            }
-        }
-    }
-
 })
 
 class IncorrectPositionException : Exception()
 class IncorrectCommandException : Exception()
 class IncorrectSizeException : Exception()
+class UnexpectectPointStateException : Exception()
 
 enum class COMMANDS {
     F, B, R, L
@@ -215,15 +245,8 @@ class Mapping(private val size: Pair<Int, Int>, private val obstacles: ArrayList
     }
 
     private fun generateMap() {
-        val limit = ArrayList<String>()
-        for(i in 0..size.first + 1)
-            limit.add("-")
-
-        map.add(limit)
-
         for(y in 1..size.second) {
             val line = ArrayList<String>()
-            line.add("|")
             for(x in 1..size.first) {
                 line.add(when(x) {
                     in 0..size.first -> when(obstacles.contains(Pair(x,y))){
@@ -233,10 +256,8 @@ class Mapping(private val size: Pair<Int, Int>, private val obstacles: ArrayList
                     else -> throw IncorrectSizeException()
                 })
             }
-            line.add("|")
             map.add(line)
         }
-        map.add(limit)
     }
 
     private fun print() {
@@ -245,7 +266,23 @@ class Mapping(private val size: Pair<Int, Int>, private val obstacles: ArrayList
         println()
         println("Map starts at x=0 y=0 ends at x=${size.first} y=${size.second}")
         println()
-        map.map { println(it.joinToString(separator = "")) }
+        val limit = ArrayList<String>()
+        for(i in 0..size.first + 1)
+            limit.add("-")
+
+        println(limit.joinToString(separator = ""))
+        map.map {
+            println("|${it.joinToString(separator = "")}|")
+        }
+        println(limit.joinToString(separator = ""))
+    }
+
+    fun pointState(x: Int, y: Int): String {
+        return when(map[y-1][x-1]){
+            " " -> " "
+            "O" -> "O"
+            else -> throw UnexpectectPointStateException()
+        }
     }
 }
 
