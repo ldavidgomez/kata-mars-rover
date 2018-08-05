@@ -190,7 +190,7 @@ private val movementMap =
                 )
         )
 
-data class Mapping(val size: Pair<Int, Int>, val obstacles: ArrayList<Pair<Int, Int>>) {
+class Mapping(private val size: Pair<Int, Int>, private val obstacles: ArrayList<Pair<Int, Int>>) {
 
     private val map = arrayListOf<ArrayList<String>>()
 
