@@ -173,7 +173,8 @@ class RoverSpek: Spek({
                 val command = arrayOf("f","r","f")
                 assertFailsWith<IncorrectPathException> {
                     val rover = Rover(Position(2, 2, N), mapTestCase)
-                    rover.move(command)
+                    val roverPosition = rover.move(command)
+                    roverPosition `should equal` IncorrectPathException(Pair(2, 3))
                     rover.whereAreYou `should equal` Position(2, 2, N)
                 }
             }
@@ -187,7 +188,7 @@ class IncorrectPositionException : Exception()
 class IncorrectCommandException : Exception()
 class IncorrectSizeException : Exception()
 class UnexpectedPointStateException : Exception()
-class IncorrectPathException(point: Pair<Int, Int>) : Exception()
+class IncorrectPathException(obstacle: Pair<Int, Int>) : Exception()
 
 
 enum class COMMANDS {
