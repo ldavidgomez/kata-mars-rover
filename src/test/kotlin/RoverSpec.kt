@@ -69,9 +69,9 @@ class RoverSpek: Spek({
         )
 
         obstaclesTestCase.forEach {
-            on("send a correct clear coordinates point") {
+            on("send a correct coordinates point") {
 
-                it("should return position state clear") {
+                it("should return position state") {
                     val end = Pair(10, 10)
                     val obstacles = ArrayList<Pair<Int, Int>>()
                     obstacles.add(Pair(2,3))
